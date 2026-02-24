@@ -1,0 +1,361 @@
+import React, { useState } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
+import { TrendingUp, Search, Zap, Target, BarChart3, ShoppingBag, Award, ShieldCheck, Heart, ChevronRight, PieChart, Info, MessageSquareQuote, Sparkles, Droplets, FlaskConical, Zap as ZapIcon, Cpu } from 'lucide-react';
+
+const App = () => {
+  const [activeTab, setActiveTab] = useState('hot-search');
+
+  // 模块 1 数据：热搜榜单 (搜索占比降序)
+  const hotSearchData = [
+    { 
+      rank: 1, 
+      keyword: '重组胶原蛋白贴片', 
+      share: '32%', 
+      yoy: '+450%', 
+      verbatim: "“做完超声炮全靠它续命，想要那种真正Ⅲ型胶原、无菌封装、修复力瞬间拉满的。”",
+      summary: "医美后修复刚需。核心在于‘医学背书’与‘高纯度成分’，对标专业院线级。”" 
+    },
+    { 
+      rank: 2, 
+      keyword: '熬夜急救涂抹面膜', 
+      share: '22%', 
+      yoy: '+215%', 
+      verbatim: "“求求了，给熬夜党推荐个面膜，要那种敷完第二天脸不发黄、毛孔缩小的‘换脸’神器。”",
+      summary: "抗氧去黄是核心痛点。重点开发‘咖啡因+麦角硫因’组合，切入晚间急救场景。" 
+    },
+    { 
+      rank: 3, 
+      keyword: '以油养肤/油敷面膜', 
+      share: '15%', 
+      yoy: '+190%', 
+      verbatim: "“冬天脸干到起皮，普通补水没用，想要那种油水双相、深度滋养、敷完脸像发光的。”",
+      summary: "冬季特需。针对干皮/熟龄肌，主打‘皮脂膜修复’与‘植物油脂’溢价。" 
+    },
+    { 
+      rank: 4, 
+      keyword: '玻色因抗老冻干', 
+      share: '10%', 
+      yoy: '+125%', 
+      verbatim: "“不想用防腐剂太多的，想要那种冻干技术锁鲜的玻色因面膜，针对法令纹提拉的。”",
+      summary: "纯净美妆+高效抗老。‘锁鲜’概念能显著降低用户对防腐剂的顾虑。" 
+    },
+    { 
+      rank: 5, 
+      keyword: '水杨酸/精细化泥膜', 
+      share: '8%', 
+      yoy: '+140%', 
+      verbatim: "“鼻翼黑头多但脸颊干，有没有那种分区护理、温和不紧绷的清洁泥膜？”",
+      summary: "精细化清洁。针对混合肌的‘分区分效’（T区清、U区润）是泥膜的新蓝海。" 
+    },
+    { 
+      rank: 6, 
+      keyword: '次抛/便携式胶囊膜', 
+      share: '5%', 
+      yoy: '+95%', 
+      verbatim: "“出差旅行带一大袋太麻烦，求推荐那种一颗一次、包装干净、不占地方的胶囊面膜。”",
+      summary: "场景便利化。针对商旅人群，‘保鲜+便携’是提升复购率的关键细节。" 
+    },
+    { 
+      rank: 7, 
+      keyword: '屏障修护/蓝铜胜肽', 
+      share: '4%', 
+      yoy: '+160%', 
+      verbatim: "“一到换季脸就红，想要那种能瞬间降温、退红、不含酒精香精的救急面膜。”",
+      summary: "敏敏肌蓝海。蓝铜胜肽、神经酰胺等成分的‘高浓度实证’是成交核心。" 
+    },
+    { 
+      rank: 8, 
+      keyword: '微电流/导引黑科技', 
+      share: '2%', 
+      yoy: '+110%', 
+      verbatim: "“听说带微电流的能让精华吸收快一倍，求推荐那种自带科技感的黑金面膜。”",
+      summary: "极致体验升级。利用‘膜布科技’作为溢价锚点，切入高端送礼和极客美容市场。" 
+    },
+    { 
+      rank: 9, 
+      keyword: '纯植物/天然有机款', 
+      share: '1%', 
+      yoy: '+85%', 
+      verbatim: "“成分表越短越好，想要那种看得见的玫瑰花瓣或者积雪草原液，味道要天然。”",
+      summary: "感官护肤。强调‘零添加’与‘植物原力’，配合香氛疗愈，提升情绪价值。" 
+    },
+    { 
+      rank: 10, 
+      keyword: '针对性法令纹贴/局部膜', 
+      share: '1%', 
+      yoy: '+70%', 
+      verbatim: "“不想全脸敷，只想针对眼角和法令纹，有没有那种贴得很紧、能淡纹的局部贴？”",
+      summary: "碎片化护理。局部膜（Patching）是面膜品类的颗粒度细化，适合精致主义者。" 
+    },
+  ];
+
+  // 模块 2 数据：供需错配分析 (想买的 vs 在卖的)
+  const gapData = [
+    { name: '重组胶原修复', want: 88, selling: 25, analysis: "医美普及带动了爆发式需求，但市面多为普通修复，缺乏Ⅲ型胶原认证的高端SKU。" },
+    { name: '熬夜抗氧急救', want: 82, selling: 35, analysis: "用户想要‘敷完即亮’的体感，在卖多为长效美白款，见效慢导致满意度低。" },
+    { name: '以油养肤双相', want: 75, selling: 20, analysis: "冬季爆点，但国内品牌在‘油水平衡’的肤感处理上仍有断层。" },
+    { name: '分区分效泥膜', want: 70, selling: 30, analysis: "混合肌是主流人群，但单罐全脸抹的陈旧模式仍占据90%的货架。" },
+    { name: '冻干锁鲜技术', want: 65, selling: 40, analysis: "纯净美妆风口，用户对‘零防腐’有溢价意愿，但冻干面膜的稳定性成本较高导致供给不足。" },
+    { name: '基础补水贴片', want: 20, selling: 95, analysis: "严重过剩。价格战杀到‘1元1片’，利润微薄，采销应坚决去库存化。" },
+  ];
+
+  // 模块 3 数据：深度产品策略
+  const productStrategy = [
+    { 
+      title: "【顶级修复】重组Ⅲ型胶原蛋白医用冷敷贴", 
+      trend: "品质觉醒：医美术后即时修复成为‘黄金24小时’的标配需求。",
+      product: "100%人源化重组胶原蛋白，无菌II类医疗器械认证。采用双重降温膜布，针对红热、痛痒。",
+      marketing: "绑定京东‘大药房’交叉引流。发起#医美术后这一片就够了#挑战。针对PLUS会员提供周期购。",
+      categoryShare: "28%",
+      yoyGrowth: "+65%",
+      tag: "利润引擎"
+    },
+    { 
+      title: "【熬夜换脸】能量晶透晚霜面膜 (涂抹式)", 
+      trend: "极致体验：年轻人‘边熬最晚的夜，敷最贵的膜’，追求视觉上的瞬间去黄。",
+      product: "高浓度麦角硫因+1%咖啡因+阿魏酸。采用‘奶酪纹理’肤感，一抹即融，免洗设计。",
+      marketing: "锁定小红书#熬夜救命贴#话题。在京东APP搜索‘熬夜面膜’拦截首页。联合电竞/办公品类跨界。",
+      categoryShare: "20%",
+      yoyGrowth: "+120%",
+      tag: "科技壁垒"
+    },
+    { 
+      title: "【极境滋养】双相油水水光‘发光’面膜", 
+      trend: "功能升级：单一补水已无法满足干敏肌，‘皮脂膜类成分’补油才是深层滋润的终点。",
+      product: "上层植物精萃油（角鲨烷+玫瑰果油），下层玻尿酸原液。摇匀后物理激活。膜布采用蚕丝材质。",
+      marketing: "针对‘干皮救星’人群投流。展示‘敷完15分钟皮肤水分油分对比’。切入冬季滑雪、沙漠旅行场景。",
+      categoryShare: "15%",
+      yoyGrowth: "+85%",
+      tag: "风味黑马"
+    },
+    { 
+      title: "【精准净透】T+U 分区护理泥膜套盒", 
+      trend: "精细化护理：拒绝‘一刀切’，用户追求针对不同毛孔状况的动态清洁方案。",
+      product: "T区高岭土（深层吸附），U区亚马逊白泥+洋甘菊（温和去角质+舒缓）。独立双仓设计。",
+      marketing: "小红书‘分区测评’专家背书。在京东详情页通过‘测测你是哪种肌’互动增加转化。主打‘不拔干的净彻’。",
+      categoryShare: "12%",
+      yoyGrowth: "+50%",
+      tag: "品类创新"
+    },
+    { 
+      title: "【极致锁鲜】玻色因冻干胶原蛋白膜王", 
+      trend: "向实消费：拒绝防腐剂焦虑。冻干技术让高浓度成分在无液状态下保持最高活性。",
+      product: "30%玻色因溶液冻干成膜，即时复活。膜布自带精华。主打‘法令纹提拉’与‘苹果肌充盈’。",
+      marketing: "切入‘成分党’、‘精简护肤’圈层。主打‘一片等于半瓶精华’。利用京东超市‘成分探秘’直播间推广。",
+      categoryShare: "15%",
+      yoyGrowth: "+40%",
+      tag: "品牌护城河"
+    },
+    { 
+      title: "【商旅专供】次抛胶囊急救舒缓套装", 
+      trend: "场景化：移动办公与旅行频繁。用户需要不占行李额、不漏液、应对温差过敏的应急方案。",
+      product: "单颗5ml，真空氮气保鲜。包含积雪草、b5等舒缓成分。自带折叠式面膜刷。",
+      marketing: "入驻‘旅行/个人护理’频道。主打‘带得走的移动美容院’。绑定京东自营酒店、出行流量包。",
+      categoryShare: "10%",
+      yoyGrowth: "+90%",
+      tag: "流量蓝海"
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-slate-50 p-4 md:p-6 font-sans text-slate-900">
+      <div className="max-w-6xl mx-auto space-y-4">
+        
+        {/* Compact Header */}
+        <header className="flex flex-col md:flex-row md:items-center justify-between bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-emerald-600 rounded-xl text-white shadow-lg shadow-emerald-100">
+              <Droplets size={24} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                面膜品类机会识别仪表盘
+                <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">2026 Strategic</span>
+              </h1>
+              <p className="text-sm text-slate-500 font-medium">采销决策参考 · Dec 2025 · <span className="text-emerald-600 uppercase">Aesthetic Intelligence</span></p>
+            </div>
+          </div>
+          <div className="flex gap-2 mt-4 md:mt-0">
+            {['hot-search', 'gap', 'action'].map((tab) => (
+              <button 
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === tab ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:bg-slate-100'}`}
+              >
+                {tab === 'hot-search' ? '热搜透视' : tab === 'gap' ? '供需错配' : '规划方案'}
+              </button>
+            ))}
+          </div>
+        </header>
+
+        {/* Dashboard Content */}
+        <div className="min-h-[500px]">
+          
+          {/* Tab 1: Hot Search - Dual Column Grid */}
+          {activeTab === 'hot-search' && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 animate-in fade-in duration-300">
+              <div className="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <TrendingUp size={14} className="text-emerald-600" /> 用户搜索权重与原声 (降序)
+                </h3>
+                <div className="space-y-4">
+                  {hotSearchData.slice(0, 5).map((item) => (
+                    <div key={item.rank} className="flex gap-4 p-4 rounded-2xl bg-slate-50/50 hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-emerald-100 group">
+                      <div className="flex flex-col items-center justify-center w-12">
+                        <span className="text-2xl font-black text-slate-200 group-hover:text-emerald-200 italic leading-none">0{item.rank}</span>
+                        <div className="text-[10px] font-bold text-red-500 mt-1">{item.yoy}</div>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="font-black text-slate-800 text-lg">{item.keyword}</span>
+                          <span className="text-xl font-black text-emerald-600 font-mono">{item.share}</span>
+                        </div>
+                        <div className="flex gap-2 items-start bg-white p-3 rounded-xl border border-slate-100 mb-2">
+                           <MessageSquareQuote size={14} className="text-emerald-300 shrink-0 mt-1" />
+                           <p className="text-[11px] text-slate-500 italic leading-relaxed">{item.verbatim}</p>
+                        </div>
+                        <p className="text-xs font-bold text-slate-700 border-l-2 border-emerald-500 pl-3">策略建议：{item.summary}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl">
+                   <div className="flex items-center gap-2 text-emerald-400 mb-4">
+                      <ZapIcon size={20} fill="currentColor" />
+                      <h4 className="font-black uppercase tracking-tighter">本月机会核心</h4>
+                   </div>
+                   <p className="text-lg font-bold leading-tight mb-4">
+                      面膜正在<span className="text-emerald-400">“医研化”</span>与<span className="text-emerald-400">“精细化”</span>。<br/>
+                   </p>
+                   <p className="text-xs text-slate-400 leading-relaxed">
+                      传统的10片装通用面膜面临淘汰，具备“高活冻干”、“分层护理”及“术后实证”的产品将拿走 70% 的溢价。
+                   </p>
+                </div>
+                <div className="bg-white p-5 rounded-3xl shadow-sm border border-slate-200">
+                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">潜力细分趋势</h3>
+                  <div className="space-y-3">
+                     {hotSearchData.slice(5, 10).map((item) => (
+                       <div key={item.rank} className="flex items-center justify-between p-2 hover:bg-slate-50 rounded-xl transition-colors">
+                          <div className="flex items-center gap-3">
+                             <span className="text-xs font-black text-slate-300 w-4">{item.rank === 10 ? '10' : `0${item.rank}`}</span>
+                             <span className="text-sm font-bold text-slate-700">{item.keyword}</span>
+                          </div>
+                          <span className="text-xs font-bold text-emerald-600">{item.share}</span>
+                       </div>
+                     ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 2: Gap Analysis - Split Layout */}
+          {activeTab === 'gap' && (
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 flex flex-col lg:flex-row gap-10 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="flex-1 h-[380px]">
+                <div className="mb-6">
+                  <h3 className="text-lg font-black text-slate-900">供需错配分析仪表盘 (%)</h3>
+                  <p className="text-xs text-slate-400 font-medium uppercase tracking-widest mt-1">想买的 (红色需求) vs 在卖的 (蓝色供给)</p>
+                </div>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={gapData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <XAxis dataKey="name" tick={{ fontSize: 11, fontWeight: 800, fill: '#64748b' }} axisLine={false} tickLine={false} />
+                    <YAxis hide domain={[0, 100]} />
+                    <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }} />
+                    <Bar name="需求热度" dataKey="want" fill="#ef4444" radius={[6, 6, 0, 0]} barSize={32} />
+                    <Bar name="供给饱和" dataKey="selling" fill="#3b82f6" radius={[6, 6, 0, 0]} barSize={32} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="lg:w-96 space-y-4">
+                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <PieChart size={14} /> 采销断层诊断建议
+                </h3>
+                {gapData.slice(0, 3).map((item, i) => (
+                  <div key={i} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 group hover:border-emerald-200 transition-all">
+                    <div className="flex justify-between items-center mb-2">
+                       <p className="text-xs font-black text-emerald-700">{item.name}</p>
+                       <span className="text-[10px] font-black text-red-500 bg-red-50 px-2 py-0.5 rounded">缺口显著</span>
+                    </div>
+                    <p className="text-[11px] text-slate-600 leading-tight font-medium">{item.analysis}</p>
+                  </div>
+                ))}
+                <div className="p-4 bg-slate-900 rounded-2xl text-white">
+                   <p className="text-[10px] font-black text-slate-400 mb-1">红海预警</p>
+                   <p className="text-xs font-bold leading-tight">基础补水品类供给溢出 4.75倍，建议坚决缩减非自营低端SKU展示权重。</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 3: Action Plan - 3 Column Grid */}
+          {activeTab === 'action' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 animate-in fade-in duration-300">
+              {productStrategy.map((sku, index) => (
+                <div key={index} className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 hover:border-emerald-500 transition-all group relative overflow-hidden flex flex-col h-full">
+                  <div className="absolute -top-4 -right-4 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                    <FlaskConical size={80} />
+                  </div>
+                  <div className="flex justify-between items-start mb-4">
+                    <span className="text-[10px] font-black px-2.5 py-1 bg-emerald-50 text-emerald-600 rounded-lg uppercase tracking-tight">{sku.tag}</span>
+                    <ChevronRight size={18} className="text-slate-200 group-hover:text-emerald-500 transition-transform group-hover:translate-x-1" />
+                  </div>
+                  <h4 className="text-xl font-black text-slate-900 mb-3 leading-tight">{sku.title}</h4>
+                  <p className="text-[11px] text-slate-500 leading-relaxed font-medium mb-4 flex-grow">{sku.product}</p>
+                  
+                  <div className="space-y-3 pt-4 border-t border-slate-50">
+                    <div className="flex justify-between items-end">
+                       <div className="text-center bg-slate-50 px-3 py-2 rounded-xl border border-slate-100 flex-1 mr-2">
+                          <span className="block text-[9px] font-black text-slate-400 uppercase tracking-tighter mb-1">品类占比预测</span>
+                          <span className="text-lg font-black text-slate-700">{sku.categoryShare}</span>
+                       </div>
+                       <div className="text-center bg-emerald-600 px-3 py-2 rounded-xl shadow-lg shadow-emerald-100 flex-1 ml-2">
+                          <span className="block text-[9px] font-black text-emerald-100 uppercase tracking-tighter mb-1">YoY 增长</span>
+                          <span className="text-lg font-black text-white">{sku.yoyGrowth}</span>
+                       </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+        </div>
+
+        {/* Action Bottom Bar */}
+        <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden relative border-t border-white/10">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl -ml-48 -mt-48"></div>
+          <div className="relative z-10 text-center md:text-left flex-1">
+            <h4 className="text-2xl font-black mb-2 tracking-tight">2026 京东面膜采销战略路线图</h4>
+            <p className="text-sm text-slate-400 font-medium max-w-2xl leading-relaxed italic">
+              谁先打通<span className="text-emerald-400 font-bold">“术后即时修复”</span>与<span className="text-emerald-400 font-bold">“高活锁鲜技术”</span>的供应链壁垒，谁就能跳出面膜行业的“1元地狱”，掌握2026年潮流影像的主动权。
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full md:w-auto">
+            <button className="bg-emerald-600 hover:bg-emerald-700 px-10 py-4 rounded-2xl font-black text-sm transition-all shadow-xl active:scale-95 text-white flex items-center justify-center gap-2">
+               启动工厂直采 <ChevronRight size={18} />
+            </button>
+            <button className="bg-white/10 hover:bg-white/20 border border-white/20 px-10 py-4 rounded-2xl font-black text-sm backdrop-blur-md transition-all text-white">
+              下载类目增长底表
+            </button>
+          </div>
+        </div>
+
+      </div>
+      
+      {/* Dynamic Mini Footer */}
+      <div className="max-w-6xl mx-auto flex justify-center gap-10 mt-10 opacity-20 group">
+        <FlaskConical size={20} className="hover:text-emerald-500 transition-colors cursor-pointer" />
+        <Droplets size={20} className="hover:text-blue-500 transition-colors cursor-pointer" />
+        <ZapIcon size={20} className="hover:text-yellow-500 transition-colors cursor-pointer" />
+        <Cpu size={20} className="hover:text-red-500 transition-colors cursor-pointer" />
+        <ShieldCheck size={20} className="hover:text-green-500 transition-colors cursor-pointer" />
+      </div>
+    </div>
+  );
+};
+
+export default App;
